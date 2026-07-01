@@ -164,12 +164,13 @@ if __name__ == "__main__":
     print("  Smart Cabin AI — server starting")
     print("  Open: http://localhost:5000")
     print("=" * 60)
-    # IMPORTANT: use_reloader must stay False. Flask's debug reloader
-    # spawns a child process to actually serve requests, and flask-sock's
-    # WebSocket connections get bound inconsistently across that
-    # parent/child boundary — the browser's WebSocket reports "open"
-    # (the TCP handshake succeeds) but no messages ever flow afterward,
-    # which looks exactly like "camera ready, connecting to detector…"
-    # hanging forever with no error. debug=True (for tracebacks in the
-    # browser) is safe to keep; use_reloader=False is the part that matters.
-    app.run(host="0.0.0.0", port=5000, debug=True, threaded=True, use_reloader=False)
+
+    port = int(os.environ.get("PORT", 5000))
+
+    app.run(
+        host="0.0.0.0",
+        port=port,
+        debug=False,
+        threaded=True,
+        use_reloader=False,
+    )

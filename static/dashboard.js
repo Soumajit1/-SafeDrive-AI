@@ -51,6 +51,7 @@
   let stopped = false;
   let firstFrameReceived = false;
   let lastFrameSentAt = 0;
+  const FRAME_INTERVAL = 200; // 100ms = 10 FPS
   let watchdogWarned = false;
   let alarmPlaying = false;
 
@@ -224,13 +225,8 @@
         pushLog('First frame processed — detection running');
       }
 
-      if (data.frame) {
-        annotatedFrame.src = data.frame;
-        annotatedFrame.style.display = 'block';
-        feedMsg.style.display = 'none';
-        recBadge.style.display = 'flex';
-      }
-
+      feedMsg.style.display = "none";
+recBadge.style.display = "flex";
       renderAlert(data);
       renderGauge(data.drowsiness_score, data.alert_level);
       renderMetrics(data);
@@ -282,7 +278,7 @@
 
     try {
       stream = await navigator.mediaDevices.getUserMedia({
-        video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: 'user' },
+        video: { width: { ideal: 320 }, height: { ideal: 240 }, facingMode: 'user' },
         audio: false
       });
 
@@ -301,6 +297,8 @@
 
       try {
         await rawVideo.play();
+        rawVideo.style.display = "block";
+annotatedFrame.style.display = "none";
       } catch (playErr) {
         // Autoplay can be rejected in rare cases; retry once after a
         // user-gesture-free microtask tick, otherwise surface the error.
@@ -312,21 +310,31 @@
       setFeedMessage('Camera ready — connecting to detector…', true);
       pushLog('Camera stream started');
 
-      captureCanvas.width = 640;
-      captureCanvas.height = 480;
+      captureCanvas.width = 320;
+      captureCanvas.height = 240;
       const ctx = captureCanvas.getContext('2d');
 
       function captureLoop() {
         if (stopped) return;
-        if (ws && ws.readyState === WebSocket.OPEN && !sending && rawVideo.videoWidth > 0) {
+       const now = Date.now();
+
+if (
+    ws &&
+    ws.readyState === WebSocket.OPEN &&
+    !sending &&
+    rawVideo.videoWidth > 0 &&
+    (now - lastFrameSentAt) >= FRAME_INTERVAL
+) {
+
+
           ctx.save();
           ctx.translate(captureCanvas.width, 0);
           ctx.scale(-1, 1); // mirror to match natural selfie view
           ctx.drawImage(rawVideo, 0, 0, captureCanvas.width, captureCanvas.height);
           ctx.restore();
-          const b64 = captureCanvas.toDataURL('image/jpeg', 0.7);
+          const b64 = captureCanvas.toDataURL('image/jpeg', 0.4);
           sending = true;
-          lastFrameSentAt = Date.now();
+          lastFrameSentAt = now;
           ws.send(JSON.stringify({ frame: b64 }));
         }
         requestAnimationFrame(captureLoop);
@@ -370,7 +378,7 @@
     alarmAudio.currentTime = 0;
     feedMsg.style.display = 'flex';
     feedMsg.innerHTML = '<span>■ Session stopped</span>';
-    annotatedFrame.style.display = 'none';
+   rawVideo.style.display = "none";
     recBadge.style.display = 'none';
     alertBanner.className = 'alert-banner';
     alertBanner.innerHTML = '⏹️ &nbsp;Session stopped — refresh the page to start again';
