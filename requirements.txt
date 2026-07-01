@@ -3,4 +3,4 @@ flask-sock==0.7.0
 gunicorn==26.0.0
 mediapipe==0.10.35
 numpy==2.5.0
-opencv-python==4.13.0.92
+opencv-python-headless==4.13.0.92
