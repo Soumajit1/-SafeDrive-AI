@@ -25,6 +25,7 @@ import numpy as np
 import time
 from dataclasses import dataclass, field
 from typing import Optional
+from collections import deque
 
 
 # ─── MediaPipe Face Mesh indices for eyes ───────────────────────────────────
@@ -52,6 +53,7 @@ class DetectionResult:
     distracted:       bool  = False
     eyes_closed:      bool  = False
     fps:              float = 0.0
+    detection_mode:   str   = "haar"     # "mediapipe" | "haar" — which path produced this frame
     annotated_frame:  Optional[np.ndarray] = field(default=None, repr=False)
 
 
@@ -98,6 +100,13 @@ class DriverDetector:
         self._fps                = 0.0
         # Smoothing for EAR to reduce single-frame cascade flicker
         self._ear_smooth         = 0.30
+
+        # Haar-fallback reliability tracking (see _haar_eye_analysis):
+        # a single "no eyes found" frame is NOT enough evidence of closed
+        # eyes on its own — glasses/lighting/JPEG compression regularly
+        # defeat the eye cascade even with eyes wide open.
+        self._frontal_miss_streak = 0
+        self._eye_hit_history     = deque(maxlen=30)
 
     # ── MediaPipe optional setup ─────────────────────────────────────────
     def _try_init_mediapipe(self):
@@ -167,6 +176,7 @@ class DriverDetector:
                                           self.DROWSY_HEAD_CONSEC * 2)
             result.head_turn_frames = self._head_turn_frames
             result.distracted = True
+            result.detection_mode = "mediapipe" if self._mp_landmarker else "haar"
             self._finalize_score(result, eyes_trustworthy=False)
             result.annotated_frame = self._overlay(display, result)
             return result
@@ -187,6 +197,7 @@ class DriverDetector:
         eyes_trustworthy = True
         if not mp_ok:
             eyes_trustworthy = self._haar_eye_analysis(gray, display, result, fx, fy, fw, fh)
+        result.detection_mode = "mediapipe" if mp_ok else "haar"
 
         # ── Update independent timers ─────────────────────────────────
         self._update_eye_timer(result, eyes_trustworthy)
@@ -296,20 +307,42 @@ class DriverDetector:
 
         n_found = len(eyes)
 
+        # Track how often the cascade finds ANY eyes at all on frontal
+        # frames. If it's rarely finding eyes for this driver (glasses
+        # glare, backlight, JPEG compression softness), that's a sign the
+        # cascade just doesn't work well for them — not that their eyes
+        # are actually closed every frame.
+        if face_is_frontal:
+            self._eye_hit_history.append(1 if n_found > 0 else 0)
+        hit_rate = (
+            sum(self._eye_hit_history) / len(self._eye_hit_history)
+            if self._eye_hit_history else 1.0
+        )
+
         if n_found == 0:
             if face_is_frontal:
-                # Frontal face, cascade found NO eye shapes at all.
-                # This is the classic signature of closed eyes (no
-                # eyelid/eyelash contrast for the cascade to latch onto).
-                synth_ear = 0.14
-                eyes_trustworthy = True
+                self._frontal_miss_streak += 1
+                # Only trust "no eyes found" as "eyes closed" once we've
+                # missed several consecutive frames (a single-frame miss is
+                # noise, not a blink) AND the cascade has a reasonable
+                # recent hit-rate overall (i.e. it normally CAN see this
+                # driver's eyes — so a real closure, not glasses/lighting
+                # defeating the cascade every single frame).
+                if self._frontal_miss_streak >= 3 and hit_rate >= 0.35:
+                    synth_ear = 0.14
+                    eyes_trustworthy = True
+                else:
+                    synth_ear = max(self._ear_smooth, self.EAR_THRESHOLD + 0.02)
+                    eyes_trustworthy = False
             else:
                 # Head is turned -> cascade naturally fails regardless of
                 # eye state. Don't claim eyes are closed; just hold the
                 # last known EAR so the eye-closed timer doesn't move.
+                self._frontal_miss_streak = 0
                 synth_ear = max(self._ear_smooth, self.EAR_THRESHOLD + 0.02)
                 eyes_trustworthy = False
         else:
+            self._frontal_miss_streak = 0
             ear_map = {0: 0.14, 1: 0.20, 2: 0.30}
             synth_ear = ear_map.get(open_eye_count, 0.14)
             eyes_trustworthy = True

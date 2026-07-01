@@ -30,6 +30,7 @@
   const mYaw     = document.getElementById('mYaw');
   const mYawSub  = document.getElementById('mYawSub');
   const mFace    = document.getElementById('mFace');
+  const mModeSub = document.getElementById('mModeSub');
   const mFps     = document.getElementById('mFps');
 
   const logPanel = document.getElementById('logPanel');
@@ -46,6 +47,7 @@
   let ws = null;
   let stream = null;
   let lastAlertLevel = null;
+  let lastDetectionMode = null;
   let lastDistractLog = 0;
   let sending = false;
   let stopped = false;
@@ -159,6 +161,13 @@
     mFace.className = 'val ' + (data.face_detected ? 'c-green' : 'c-red');
     mFace.style.fontSize = '1rem';
 
+    if (mModeSub) {
+      mModeSub.textContent = data.detection_mode === 'mediapipe'
+        ? 'MediaPipe (precise)'
+        : 'Haar fallback';
+      mModeSub.className = 'sub ' + (data.detection_mode === 'mediapipe' ? '' : 'c-yellow');
+    }
+
     mFps.textContent = `${Math.round(data.fps)} fps`;
   }
 
@@ -237,6 +246,15 @@ recBadge.style.display = "flex";
       renderSpark();
 
       // Event log
+      if (data.detection_mode && data.detection_mode !== lastDetectionMode) {
+        if (lastDetectionMode !== null) {
+          const msg = data.detection_mode === 'haar'
+            ? '⚠ Dropped to Haar-cascade fallback (MediaPipe unavailable) — eye readings are less precise'
+            : '✓ Precision MediaPipe detection active';
+          pushLog(msg, data.detection_mode === 'haar' ? 'warn' : null);
+        }
+        lastDetectionMode = data.detection_mode;
+      }
       if (data.alert_level !== lastAlertLevel) {
         const lvl = data.alert_level === 'DROWSY' ? 'crit' : (data.alert_level === 'FATIGUE' ? 'warn' : null);
         pushLog(`Status → ${data.alert_level}`, lvl);

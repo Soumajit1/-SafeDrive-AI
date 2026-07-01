@@ -146,6 +146,7 @@ def stream(ws):
                 "distracted": bool(result.distracted),
                 "fps": float(result.fps),
                 "blink_detected": bool(result.blink_detected),
+                "detection_mode": str(result.detection_mode),
                 "ts": time.strftime("%H:%M:%S"),
             }
 
