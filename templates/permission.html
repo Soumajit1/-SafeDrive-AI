@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Camera Access — Smart Cabin AI</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+<style>
+  .stage {
+    min-height: calc(100vh - 67px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 480px;
+    padding: 44px 40px 36px;
+    text-align: center;
+  }
+
+  .cam-icon {
+    width: 76px; height: 76px;
+    margin: 0 auto 26px;
+    border-radius: 20px;
+    background: var(--bg-raised);
+    border: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+    position: relative;
+  }
+  .cam-icon::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: 21px;
+    border: 1px solid rgba(255,138,30,0.0);
+    transition: border-color 0.3s;
+  }
+  .cam-icon.scanning::after {
+    border-color: rgba(255,138,30,0.5);
+    animation: ring-pulse 1.4s ease-out infinite;
+  }
+  @keyframes ring-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(255,138,30,0.35); }
+    100% { box-shadow: 0 0 0 14px rgba(255,138,30,0); }
+  }
+
+  .card h1 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: var(--text-hi);
+  }
+  .card p.sub {
+    color: var(--text-mid);
+    font-size: 0.92rem;
+    line-height: 1.6;
+    margin-bottom: 28px;
+  }
+
+  .perm-list {
+    text-align: left;
+    background: var(--bg-raised);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: 16px 18px;
+    margin-bottom: 28px;
+  }
+  .perm-list li {
+    list-style: none;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-size: 0.82rem;
+    color: var(--text-mid);
+    padding: 7px 0;
+  }
+  .perm-list li:not(:last-child) { border-bottom: 1px solid var(--line-soft); }
+  .perm-list li .chk { color: var(--teal); flex-shrink: 0; }
+
+  .actions { display: flex; flex-direction: column; gap: 10px; }
+
+  #statusBox {
+    display: none;
+    text-align: left;
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  #statusBox.show { display: flex; }
+  #statusBox.error {
+    background: rgba(255,77,77,0.07);
+    border: 1px solid rgba(255,77,77,0.3);
+    color: #ffb3b3;
+  }
+  #statusBox.success {
+    background: rgba(61,214,140,0.08);
+    border: 1px solid rgba(61,214,140,0.3);
+    color: #a9f0cc;
+  }
+
+  .spinner {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.25);
+    border-top-color: var(--amber);
+    animation: spin 0.7s linear infinite;
+    display: inline-block;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+  <header class="topbar">
+    <a class="mark" href="{{ url_for('welcome') }}" style="text-decoration:none">🚗</a>
+    <span class="wordmark">Smart Cabin AI</span>
+    <span class="tag">STEP 2 OF 2</span>
+    <div class="right">
+      <span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--text-low)">CAMERA SETUP</span>
+    </div>
+  </header>
+
+  <div class="stage">
+    <div class="card panel">
+      <div class="cam-icon" id="camIcon">📷</div>
+      <h1>Enable your camera</h1>
+      <p class="sub">
+        Smart Cabin AI needs webcam access to watch for blinks, eye closure, and
+        head movement. Processing happens on this device — no video is uploaded
+        or stored.
+      </p>
+
+      <ul class="perm-list">
+        <li><span class="chk">✓</span> Video stays on your machine, sent only to your local backend</li>
+        <li><span class="chk">✓</span> Nothing is recorded or saved to disk</li>
+        <li><span class="chk">✓</span> You can revoke access anytime from your browser settings</li>
+      </ul>
+
+      <div id="statusBox"></div>
+
+      <div class="actions">
+        <button class="btn btn-primary btn-block" id="grantBtn">
+          Allow camera access
+        </button>
+        <button class="btn btn-ghost btn-block" id="backBtn">
+          Go back
+        </button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const grantBtn  = document.getElementById('grantBtn');
+  const backBtn   = document.getElementById('backBtn');
+  const statusBox = document.getElementById('statusBox');
+  const camIcon   = document.getElementById('camIcon');
+
+  backBtn.addEventListener('click', () => {
+    window.location.href = "{{ url_for('welcome') }}";
+  });
+
+  function setStatus(kind, html) {
+    statusBox.className = 'show ' + kind;
+    statusBox.innerHTML = html;
+  }
+
+  function describeError(err) {
+    if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+      return '⚠️ Camera access was denied. Click the camera icon in your address bar and allow access, then try again.';
+    }
+    if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+      return '⚠️ No camera was found on this device. Connect a webcam and try again.';
+    }
+    if (err.name === 'NotReadableError') {
+      return '⚠️ The camera is already in use by another application (or another browser tab). Close it and try again.';
+    }
+    if (err.name === 'TimeoutError') {
+      return '⚠️ Camera took too long to respond. Close any other app or tab using the camera, then try again.';
+    }
+    return `⚠️ Could not access the camera (${err.name || err.message || 'unknown error'}).`;
+  }
+
+  grantBtn.addEventListener('click', async () => {
+    grantBtn.disabled = true;
+    grantBtn.innerHTML = '<span class="spinner"></span> Requesting access…';
+    camIcon.classList.add('scanning');
+    statusBox.classList.remove('show');
+
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      setStatus('error', '⚠️ Your browser does not support camera access. Please use an up-to-date version of Chrome, Edge, or Firefox.');
+      grantBtn.disabled = false;
+      grantBtn.textContent = 'Allow camera access';
+      camIcon.classList.remove('scanning');
+      return;
+    }
+
+    // NOTE: This page only PROBES for permission — it requests the stream,
+    // confirms it works, then immediately stops every track again before
+    // navigating. The dashboard page is the only place that holds a
+    // long-lived camera stream. Two pages each holding their own
+    // long-lived getUserMedia() stream back-to-back across a page
+    // navigation is unreliable on Windows/DirectShow cameras: the second
+    // request can hang forever waiting for the OS to release the device,
+    // with no error and no resolution — which is the "stuck on Waiting
+    // for camera…" bug. Probing here avoids that entirely.
+    const timeoutMs = 8000;
+    let timedOut = false;
+    const timeoutId = setTimeout(() => { timedOut = true; }, timeoutMs);
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: "user" },
+        audio: false
+      });
+
+      clearTimeout(timeoutId);
+
+      // Confirm it actually works, then release it fully before leaving.
+      stream.getTracks().forEach(t => t.stop());
+
+      setStatus('success', '✓ Camera access confirmed. Taking you to the live dashboard…');
+      camIcon.classList.remove('scanning');
+      camIcon.textContent = '✅';
+
+      sessionStorage.setItem('cameraPermissionGranted', '1');
+
+      setTimeout(() => {
+        window.location.href = "{{ url_for('dashboard') }}";
+      }, 500);
+
+    } catch (err) {
+      clearTimeout(timeoutId);
+      camIcon.classList.remove('scanning');
+      grantBtn.disabled = false;
+      grantBtn.textContent = 'Try again';
+      setStatus('error', describeError(err));
+      console.error('[Smart Cabin AI] getUserMedia failed:', err);
+    }
+  });
+</script>
+</body>
+</html>

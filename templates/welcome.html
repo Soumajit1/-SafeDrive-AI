@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafeDrive-AI</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'DM Sans', sans-serif; }
+    .glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
+    .glow-blue { box-shadow: 0 0 20px rgba(59,130,246,0.3); }
+    .glow-cyan { box-shadow: 0 0 20px rgba(6,182,212,0.3); }
+    .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+    .gradient-text { background: linear-gradient(135deg, #3B82F6, #06B6D4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .btn-glow:hover { box-shadow: 0 0 30px rgba(59,130,246,0.5); transform: translateY(-2px); }
+    .btn-glow { transition: all 0.3s ease; }
+    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 0 30px rgba(6,182,212,0.15); }
+    .card-hover { transition: all 0.3s ease; }
+    .hero-glow { position: absolute; width: 500px; height: 500px; background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, transparent 70%); border-radius: 50%; pointer-events: none; }
+  </style>
+</head>
+<body class="min-h-screen text-white overflow-x-hidden" style="background: linear-gradient(rgb(10, 10, 15), rgb(13, 17, 23), rgb(10, 10, 15));">
+
+  <!-- Nav -->
+  <nav class="fixed top-0 w-full z-50 glass">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center">
+          <i data-lucide="shield-check" class="w-5 h-5 text-white"></i>
+        </div>
+        <span class="font-bold text-xl">SafeDrive-AI</span>
+      </div>
+      <div class="hidden md:flex items-center gap-8">
+        <a href="#features" class="text-gray-300 hover:text-white transition text-sm">Features</a>
+        <a href="#how-it-works" class="text-gray-300 hover:text-white transition text-sm">How It Works</a>
+        <a href="#benefits" class="text-gray-300 hover:text-white transition text-sm">Benefits</a>
+        <a href="#contact" class="text-gray-300 hover:text-white transition text-sm">Contact</a>
+        <button id="nav-cta" class="btn-glow px-5 py-2 rounded-full text-sm font-semibold" style="background: linear-gradient(135deg, rgb(59, 130, 246), rgb(6, 182, 212));">Get Started</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="relative pt-32 pb-20 px-6">
+    <div class="hero-glow top-20 -left-40"></div>
+    <div class="hero-glow bottom-0 right-0"></div>
+    <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
+      <div class="fade-in">
+        <h1 class="font-extrabold leading-tight" style="font-size: 48px;">AI-Powered Driver Safety Monitoring</h1>
+        <p class="mt-6 leading-relaxed text-slate-400" style="font-size: 17px;">SafeDrive-AI continuously monitors driver behavior in real time using computer vision and artificial intelligence. Detect drowsiness, distraction, and unsafe driving habits before they become accidents.</p>
+        <div class="flex flex-wrap gap-4 mt-8">
+          <button id="hero-cta-1" class="btn-glow px-8 py-3 rounded-full font-semibold" style="background: linear-gradient(135deg, rgb(59, 130, 246), rgb(6, 182, 212));">Try Demo</button>
+          <button id="hero-cta-2" class="btn-glow px-8 py-3 rounded-full font-semibold border border-white/20 hover:border-white/50 transition">Learn More</button>
+        </div>
+      </div>
+      <div class="fade-in relative">
+        <div class="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-2xl blur-3xl"></div>
+        <img class="relative w-full rounded-2xl shadow-2xl" loading="lazy" src="https://images.pexels.com/photos/15290307/pexels-photo-15290307.jpeg?auto=compress&cs=tinysrgb&w=1280" alt="Close-up of a modern car's digital dashboard display showcasing speedometer and navigation">
+      </div>
+    </div>
+  </header>
+
+  <!-- Features -->
+  <section id="features" class="py-20 px-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center fade-in mb-16">
+        <h2 class="font-bold gradient-text inline-block" style="font-size: 32px;">Powerful AI Features</h2>
+        <p class="mt-4 text-slate-400">Advanced computer vision capabilities that keep drivers safe</p>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div class="glass rounded-xl p-5 card-hover fade-in text-center">
+          <div class="w-10 h-10 mx-auto mb-3 rounded-lg bg-blue-500/20 flex items-center justify-center">
+            <i data-lucide="scan-face" class="w-5 h-5 text-blue-400"></i>
+          </div>
+          <p class="text-sm font-medium text-slate-200">Real-Time Face Detection</p>
+        </div>
+        <div class="glass rounded-xl p-5 card-hover fade-in text-center">
+          <div class="w-10 h-10 mx-auto mb-3 rounded-lg bg-cyan-500/20 flex items-center justify-center">
+            <i data-lucide="eye" class="w-5 h-5 text-cyan-400"></i>
+          </div>
+          <p class="text-sm font-medium text-slate-200">Eye Closure Detection</p>
+        </div>
+        <div class="glass rounded-xl p-5 card-hover fade-in text-center">
+          <div class="w-10 h-10 mx-auto mb-3 rounded-lg bg-emerald-500/20 flex items-center justify-center">
+            <i data-lucide="moon" class="w-5 h-5 text-emerald-400"></i>
+          </div>
+          <p class="text-sm font-medium text-slate-200">Drowsiness Alert</p>
+        </div>
+        <div class="glass rounded-xl p-5 card-hover fade-in text-center">
+          <div class="w-10 h-10 mx-auto mb-3 rounded-lg bg-blue-500/20 flex items-center justify-center">
+            <i data-lucide="move-3d" class="w-5 h-5 text-blue-400"></i>
+          </div>
+          <p class="text-sm font-medium text-slate-200">Head Pose Tracking</p>
+        </div>
+        <div class="glass rounded-xl p-5 card-hover fade-in text-center">
+          <div class="w-10 h-10 mx-auto mb-3 rounded-lg bg-cyan-500/20 flex items-center justify-center">
+            <i data-lucide="alert-triangle" class="w-5 h-5 text-cyan-400"></i>
+          </div>
+          <p class="text-sm font-medium text-slate-200">Driver Distraction Detection</p>
+        </div>
+        <div class="glass rounded-xl p-5 card-hover fade-in text-center">
+          <div class="w-10 h-10 mx-auto mb-3 rounded-lg bg-emerald-500/20 flex items-center justify-center">
+            <i data-lucide="bar-chart-3" class="w-5 h-5 text-emerald-400"></i>
+          </div>
+          <p class="text-sm font-medium text-slate-200">Live Dashboard Analytics</p>
+        </div>
+        <div class="glass rounded-xl p-5 card-hover fade-in text-center">
+          <div class="w-10 h-10 mx-auto mb-3 rounded-lg bg-blue-500/20 flex items-center justify-center">
+            <i data-lucide="bell-ring" class="w-5 h-5 text-blue-400"></i>
+          </div>
+          <p class="text-sm font-medium text-slate-200">Instant Audio &amp; Visual Alerts</p>
+        </div>
+        <div class="glass rounded-xl p-5 card-hover fade-in text-center">
+          <div class="w-10 h-10 mx-auto mb-3 rounded-lg bg-cyan-500/20 flex items-center justify-center">
+            <i data-lucide="brain" class="w-5 h-5 text-cyan-400"></i>
+          </div>
+          <p class="text-sm font-medium text-slate-200">AI Confidence Score</p>
+        </div>
+        <div class="glass rounded-xl p-5 card-hover fade-in text-center">
+          <div class="w-10 h-10 mx-auto mb-3 rounded-lg bg-emerald-500/20 flex items-center justify-center">
+            <i data-lucide="shield" class="w-5 h-5 text-emerald-400"></i>
+          </div>
+          <p class="text-sm font-medium text-slate-200">Privacy-First, On-Device</p>
+        </div>
+        <div class="glass rounded-xl p-5 card-hover fade-in text-center">
+          <div class="w-10 h-10 mx-auto mb-3 rounded-lg bg-blue-500/20 flex items-center justify-center">
+            <i data-lucide="cpu" class="w-5 h-5 text-blue-400"></i>
+          </div>
+          <p class="text-sm font-medium text-slate-200">Runs Locally, No Cloud</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section id="how-it-works" class="py-20 px-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center fade-in mb-16">
+        <h2 class="font-bold gradient-text inline-block" style="font-size: 32px;">How It Works</h2>
+      </div>
+      <div class="grid md:grid-cols-4 gap-6">
+        <div class="glass rounded-xl p-6 card-hover fade-in text-center">
+          <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center font-bold">1</div>
+          <p class="font-medium text-sm text-slate-300">Camera captures the driver's face in real time</p>
+        </div>
+        <div class="glass rounded-xl p-6 card-hover fade-in text-center">
+          <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-br from-cyan-500 to-emerald-400 flex items-center justify-center font-bold">2</div>
+          <p class="font-medium text-sm text-slate-300">AI analyzes facial landmarks and movements</p>
+        </div>
+        <div class="glass rounded-xl p-6 card-hover fade-in text-center">
+          <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-br from-emerald-500 to-blue-400 flex items-center justify-center font-bold">3</div>
+          <p class="font-medium text-sm text-slate-300">Detects unsafe behavior instantly</p>
+        </div>
+        <div class="glass rounded-xl p-6 card-hover fade-in text-center">
+          <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center font-bold">4</div>
+          <p class="font-medium text-sm text-slate-300">Alerts the driver before accidents happen</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dashboard Preview -->
+  <section class="py-20 px-6">
+    <div class="max-w-7xl mx-auto text-center">
+      <div class="fade-in mb-12">
+        <h2 class="font-bold gradient-text inline-block" style="font-size: 32px;">Live Dashboard Preview</h2>
+        <p class="mt-4 text-slate-400">Monitor every metric in real time with our intelligent analytics interface</p>
+      </div>
+      <div class="fade-in relative">
+        <div class="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 rounded-2xl blur-3xl"></div>
+        <img class="relative w-full rounded-2xl border border-white/10 shadow-2xl" loading="lazy" src="https://images.pexels.com/photos/27141316/pexels-photo-27141316.jpeg?auto=compress&cs=tinysrgb&w=1280" alt="Close-up of a digital interface showcasing futuristic graphs and data analytics in low light">
+      </div>
+    </div>
+  </section>
+
+  <!-- Benefits -->
+  <section id="benefits" class="py-20 px-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center fade-in mb-16">
+        <h2 class="font-bold gradient-text inline-block" style="font-size: 32px;">Why SafeDrive-AI</h2>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="glass rounded-xl p-6 card-hover fade-in">
+          <div class="w-10 h-10 mb-4 rounded-lg bg-blue-500/20 flex items-center justify-center"><i data-lucide="shield-check" class="w-5 h-5 text-blue-400"></i></div>
+          <h3 class="font-semibold mb-2 text-slate-100" style="font-size: 19px;">Prevent Road Accidents</h3>
+          <p class="text-sm text-slate-400">Proactively detect dangerous behavior and intervene before incidents occur.</p>
+        </div>
+        <div class="glass rounded-xl p-6 card-hover fade-in">
+          <div class="w-10 h-10 mb-4 rounded-lg bg-cyan-500/20 flex items-center justify-center"><i data-lucide="heart-pulse" class="w-5 h-5 text-cyan-400"></i></div>
+          <h3 class="font-semibold mb-2 text-slate-100" style="font-size: 19px;">Improve Driver Safety</h3>
+          <p class="text-sm text-slate-400">Continuous monitoring ensures drivers stay alert and focused at all times.</p>
+        </div>
+        <div class="glass rounded-xl p-6 card-hover fade-in">
+          <div class="w-10 h-10 mb-4 rounded-lg bg-emerald-500/20 flex items-center justify-center"><i data-lucide="activity" class="w-5 h-5 text-emerald-400"></i></div>
+          <h3 class="font-semibold mb-2 text-slate-100" style="font-size: 19px;">Real-Time Monitoring</h3>
+          <p class="text-sm text-slate-400">Instant detection and response with low-latency processing.</p>
+        </div>
+        <div class="glass rounded-xl p-6 card-hover fade-in">
+          <div class="w-10 h-10 mb-4 rounded-lg bg-blue-500/20 flex items-center justify-center"><i data-lucide="cpu" class="w-5 h-5 text-blue-400"></i></div>
+          <h3 class="font-semibold mb-2 text-slate-100" style="font-size: 19px;">AI-Based Detection</h3>
+          <p class="text-sm text-slate-400">Computer vision models trained for accurate blink, gaze, and head-pose tracking.</p>
+        </div>
+        <div class="glass rounded-xl p-6 card-hover fade-in">
+          <div class="w-10 h-10 mb-4 rounded-lg bg-cyan-500/20 flex items-center justify-center"><i data-lucide="lock" class="w-5 h-5 text-cyan-400"></i></div>
+          <h3 class="font-semibold mb-2 text-slate-100" style="font-size: 19px;">Privacy by Design</h3>
+          <p class="text-sm text-slate-400">Video is processed locally in your browser and server session — nothing is uploaded.</p>
+        </div>
+        <div class="glass rounded-xl p-6 card-hover fade-in">
+          <div class="w-10 h-10 mb-4 rounded-lg bg-emerald-500/20 flex items-center justify-center"><i data-lucide="plug" class="w-5 h-5 text-emerald-400"></i></div>
+          <h3 class="font-semibold mb-2 text-slate-100" style="font-size: 19px;">Easy Setup</h3>
+          <p class="text-sm text-slate-400">Runs from a single Flask app with any standard webcam — no extra hardware needed.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Statistics -->
+  <section class="py-20 px-6">
+    <div class="max-w-5xl mx-auto">
+      <div class="glass rounded-2xl p-12 fade-in">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+          <div>
+            <div class="text-3xl font-extrabold gradient-text" id="stat-1">0%</div>
+            <p class="text-sm mt-2 text-slate-400">Detection Accuracy</p>
+          </div>
+          <div>
+            <div class="text-3xl font-extrabold gradient-text" id="stat-2">0ms</div>
+            <p class="text-sm mt-2 text-slate-400">Response Time</p>
+          </div>
+          <div>
+            <div class="text-3xl font-extrabold gradient-text" id="stat-3">0/7</div>
+            <p class="text-sm mt-2 text-slate-400">Monitoring</p>
+          </div>
+          <div>
+            <div class="text-3xl font-extrabold gradient-text" id="stat-4">0+</div>
+            <p class="text-sm mt-2 text-slate-400">FPS Real-Time</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="py-20 px-6">
+    <div class="max-w-3xl mx-auto">
+      <div class="text-center fade-in mb-12">
+        <h2 class="font-bold gradient-text inline-block" style="font-size: 32px;">Frequently Asked Questions</h2>
+      </div>
+      <div class="space-y-3 fade-in" id="faq-list">
+        <div class="glass rounded-xl overflow-hidden">
+          <button class="faq-toggle w-full px-6 py-4 text-left flex items-center justify-between" type="button">
+            <span class="font-medium text-sm text-slate-200">How does the AI detection work?</span>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform"></i>
+          </button>
+          <div class="faq-answer hidden px-6 pb-4">
+            <p class="text-sm text-slate-400">SafeDrive-AI uses facial landmark detection to analyze eye openness and head pose in real time through your webcam.</p>
+          </div>
+        </div>
+        <div class="glass rounded-xl overflow-hidden">
+          <button class="faq-toggle w-full px-6 py-4 text-left flex items-center justify-between" type="button">
+            <span class="font-medium text-sm text-slate-200">Is my privacy protected?</span>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform"></i>
+          </button>
+          <div class="faq-answer hidden px-6 pb-4">
+            <p class="text-sm text-slate-400">Processing happens locally on your machine. No video is stored or sent to external servers.</p>
+          </div>
+        </div>
+        <div class="glass rounded-xl overflow-hidden">
+          <button class="faq-toggle w-full px-6 py-4 text-left flex items-center justify-between" type="button">
+            <span class="font-medium text-sm text-slate-200">What camera hardware is required?</span>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform"></i>
+          </button>
+          <div class="faq-answer hidden px-6 pb-4">
+            <p class="text-sm text-slate-400">Any standard USB or built-in webcam works. 720p resolution or better is recommended.</p>
+          </div>
+        </div>
+        <div class="glass rounded-xl overflow-hidden">
+          <button class="faq-toggle w-full px-6 py-4 text-left flex items-center justify-between" type="button">
+            <span class="font-medium text-sm text-slate-200">Which devices are supported?</span>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform"></i>
+          </button>
+          <div class="faq-answer hidden px-6 pb-4">
+            <p class="text-sm text-slate-400">Any device with a modern browser and webcam — Windows, macOS, or Linux.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="py-20 px-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center fade-in mb-12">
+        <h2 class="font-bold gradient-text inline-block" style="font-size: 32px;">Get In Touch</h2>
+      </div>
+      <div class="grid lg:grid-cols-2 gap-12 fade-in">
+        <div class="glass rounded-xl p-8">
+          <form id="contact-form" class="space-y-4">
+            <label for="c-name" class="sr-only">Name</label>
+            <input id="c-name" type="text" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-blue-500" placeholder="Your Name">
+            <label for="c-email" class="sr-only">Email</label>
+            <input id="c-email" type="email" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-blue-500" placeholder="Your Email">
+            <label for="c-msg" class="sr-only">Message</label>
+            <textarea id="c-msg" rows="4" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-blue-500 resize-none" placeholder="Your Message"></textarea>
+            <button type="submit" class="btn-glow w-full py-3 rounded-lg font-semibold" style="background: linear-gradient(135deg, rgb(59, 130, 246), rgb(6, 182, 212));">Send Message</button>
+          </form>
+          <p id="form-success" class="hidden text-emerald-400 text-sm mt-4 text-center">Message sent successfully!</p>
+        </div>
+        <div class="space-y-6">
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center"><i data-lucide="mail" class="w-5 h-5 text-blue-400"></i></div>
+            <p class="text-sm text-slate-300">contact@safedrive-ai.com</p>
+          </div>
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center"><i data-lucide="map-pin" class="w-5 h-5 text-emerald-400"></i></div>
+            <p class="text-sm text-slate-300">Kolkata, West Bengal, India</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-white/5 py-12 px-6" style="background: rgb(6, 8, 10);">
+    <div class="max-w-7xl mx-auto grid md:grid-cols-4 gap-8">
+      <div>
+        <div class="flex items-center gap-2 mb-4">
+          <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center"><i data-lucide="shield-check" class="w-4 h-4 text-white"></i></div>
+          <span class="font-bold">SafeDrive-AI</span>
+        </div>
+        <p class="text-xs leading-relaxed text-slate-500">AI-powered driver safety monitoring. Preventing accidents through intelligent real-time detection.</p>
+      </div>
+      <div>
+        <h4 class="font-semibold text-sm mb-3 text-slate-200">Navigation</h4>
+        <ul class="space-y-2 text-xs text-gray-400">
+          <li><a href="#features" class="hover:text-white transition">Features</a></li>
+          <li><a href="#how-it-works" class="hover:text-white transition">How It Works</a></li>
+          <li><a href="#benefits" class="hover:text-white transition">Benefits</a></li>
+          <li><a href="#contact" class="hover:text-white transition">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-semibold text-sm mb-3 text-slate-200">Legal</h4>
+        <ul class="space-y-2 text-xs text-gray-400">
+          <li><a href="#" class="hover:text-white transition">Privacy Policy</a></li>
+          <li><a href="#" class="hover:text-white transition">Terms of Service</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-semibold text-sm mb-3 text-slate-200">SafeDrive-AI</h4>
+        <p class="text-xs text-slate-500">Runs locally. Video never leaves your device.</p>
+      </div>
+    </div>
+    <div class="max-w-7xl mx-auto mt-8 pt-6 border-t border-white/5 text-center">
+      <p class="text-xs text-slate-600">© 2026 SafeDrive-AI. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+
+    // Smooth scroll for in-page anchors
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        const t = document.querySelector(a.getAttribute('href'));
+        if (t) t.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+
+    // Fade-in on scroll
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+
+    // Animated counters
+    function animateCounter(el, end, suffix, duration = 2000) {
+      let start = 0;
+      const step = end / (duration / 16);
+      const tick = () => {
+        start += step;
+        if (start >= end) { el.textContent = end + suffix; return; }
+        el.textContent = Math.floor(start) + suffix;
+        requestAnimationFrame(tick);
+      };
+      tick();
+    }
+    const statsObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          animateCounter(document.getElementById('stat-1'), 99, '%');
+          animateCounter(document.getElementById('stat-2'), 100, 'ms');
+          animateCounter(document.getElementById('stat-3'), 24, '/7');
+          animateCounter(document.getElementById('stat-4'), 30, '+');
+          statsObs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.3 });
+    statsObs.observe(document.getElementById('stat-1').parentElement.parentElement);
+
+    // FAQ accordion
+    document.querySelectorAll('.faq-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const answer = btn.nextElementSibling;
+        const icon = btn.querySelector('[data-lucide]');
+        const open = !answer.classList.contains('hidden');
+        document.querySelectorAll('.faq-answer').forEach(a => a.classList.add('hidden'));
+        document.querySelectorAll('.faq-toggle [data-lucide]').forEach(i => i.style.transform = '');
+        if (!open) { answer.classList.remove('hidden'); icon.style.transform = 'rotate(180deg)'; }
+      });
+    });
+
+    // Contact form (demo only, no backend endpoint)
+    document.getElementById('contact-form').addEventListener('submit', e => {
+      e.preventDefault();
+      document.getElementById('form-success').classList.remove('hidden');
+      e.target.reset();
+      setTimeout(() => document.getElementById('form-success').classList.add('hidden'), 3000);
+    });
+
+    // Route into the app — both CTAs go to the permission page
+    const goToPermission = () => { window.location.href = "{{ url_for('permission') }}"; };
+    document.getElementById('nav-cta').addEventListener('click', goToPermission);
+    document.getElementById('hero-cta-1').addEventListener('click', goToPermission);
+    document.getElementById('hero-cta-2').addEventListener('click', () => {
+      document.getElementById('features').scrollIntoView({ behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>
